@@ -1,8 +1,10 @@
 from flask import Flask
 from flask import request
 from flask import jsonify
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/')
 
@@ -58,7 +60,7 @@ def get_users():
    
    elif request.method == 'POST':
       users['users_list'].append(request.get_json())
-      resp = jsonify(success = True)
+      resp = jsonify(), 201
       return resp
 
    return users
