@@ -2,6 +2,8 @@ from flask import Flask
 from flask import request
 from flask import jsonify
 from flask_cors import CORS
+import random
+import string
 
 app = Flask(__name__)
 CORS(app)
@@ -10,6 +12,10 @@ CORS(app)
 
 def hello_world():
    return 'Hello, World!'
+   
+def generateId():
+   return ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(6))  
+
 
 users = { 
    'users_list' :
@@ -38,7 +44,7 @@ users = {
          'id' : 'zap555', 
          'name': 'Dennis',
          'job': 'Bartender',
-      }
+      } 
    ]
 }
 
@@ -56,18 +62,20 @@ def get_users():
                if not search_job:
                   subdict['users_list'].append(user)
          return subdict
-      return users
-   
+      return users 
+ 
    elif request.method == 'POST':
-      users['users_list'].append(request.get_json())
-      resp = jsonify(), 201
+      json = request.get_json()
+      json['id'] = generateId()
+      users['users_list'].append(json)
+      resp = jsonify(json), 201
       return resp
 
-   return users
-
+   return users  
+ 
 @app.route('/users/<id>', methods=['GET', 'DELETE'])
-def get_user(id):
-   if id:
+def get_user(id):  
+   if id:   
       for user in users['users_list']:
          if user['id'] == id:
             if request.method == 'GET':
@@ -75,6 +83,6 @@ def get_user(id):
             elif request.method == 'DELETE':
                users['users_list'].remove(user)
                resp = jsonify(), 204
-               return resp
-      return ({})
-   return users
+               return resp 
+      return jsonify(), 404 
+   return jsonify(), 404 
